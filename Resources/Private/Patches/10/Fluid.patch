@@ -11,14 +11,26 @@ index 2c609cd..a513d64 100644
                      $processingInstructions['fileExtension'] = $this->arguments['fileExtension'];
                  }
 diff --git a/Classes/ViewHelpers/MediaViewHelper.php b/Classes/ViewHelpers/MediaViewHelper.php
-index 48e41dd..89e9136 100644
+index 48e41dd..dc91f9e 100644
 --- a/Classes/ViewHelpers/MediaViewHelper.php
 +++ b/Classes/ViewHelpers/MediaViewHelper.php
-@@ -146,6 +146,7 @@ class MediaViewHelper extends AbstractTagBasedViewHelper
+@@ -142,6 +142,7 @@ class MediaViewHelper extends AbstractTagBasedViewHelper
+             'height' => $height,
+             'crop' => $cropArea->isEmpty() ? null : $cropArea->makeAbsoluteBasedOnFile($image),
+         ];
++        $processingInstructions['rotate'] = $cropVariantCollection->getRotate($cropVariant);
+         if (!empty($fileExtension)) {
              $processingInstructions['fileExtension'] = $fileExtension;
          }
-         $imageService = $this->getImageService();
-+        $processingInstructions['rotate'] = $cropVariantCollection->getRotate($cropVariant);
-         $processedImage = $imageService->applyProcessingInstructions($image, $processingInstructions);
-         $imageUri = $imageService->getImageUri($processedImage);
- 
+diff --git a/Classes/ViewHelpers/Uri/ImageViewHelper.php b/Classes/ViewHelpers/Uri/ImageViewHelper.php
+index 0cab034..c3d31cc 100644
+--- a/Classes/ViewHelpers/Uri/ImageViewHelper.php
++++ b/Classes/ViewHelpers/Uri/ImageViewHelper.php
+@@ -153,6 +153,7 @@ class ImageViewHelper extends AbstractViewHelper
+                 'maxHeight' => $arguments['maxHeight'],
+                 'crop' => $cropArea->isEmpty() ? null : $cropArea->makeAbsoluteBasedOnFile($image),
+             ];
++            $processingInstructions['rotate'] = $cropVariantCollection->getRotate($cropVariant);
+             if (!empty($arguments['fileExtension'])) {
+                 $processingInstructions['fileExtension'] = $arguments['fileExtension'];
+             }
