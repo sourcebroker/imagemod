@@ -1,0 +1,24 @@
+diff --git a/Classes/ViewHelpers/ImageViewHelper.php b/Classes/ViewHelpers/ImageViewHelper.php
+index 3e952da..9776fbe 100644
+--- a/Classes/ViewHelpers/ImageViewHelper.php
++++ b/Classes/ViewHelpers/ImageViewHelper.php
+@@ -170,6 +170,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
+                 'maxHeight' => $this->arguments['maxHeight'],
+                 'crop' => $cropArea->isEmpty() ? null : $cropArea->makeAbsoluteBasedOnFile($image),
+             ];
++            $processingInstructions['rotate'] = $cropVariantCollection->getRotate($cropVariant);
+             if (!empty($this->arguments['fileExtension'] ?? '')) {
+                 $processingInstructions['fileExtension'] = $this->arguments['fileExtension'];
+             }
+diff --git a/Classes/ViewHelpers/MediaViewHelper.php b/Classes/ViewHelpers/MediaViewHelper.php
+index 0604676..b977458 100644
+--- a/Classes/ViewHelpers/MediaViewHelper.php
++++ b/Classes/ViewHelpers/MediaViewHelper.php
+@@ -152,6 +152,7 @@ class MediaViewHelper extends AbstractTagBasedViewHelper
+             $processingInstructions['fileExtension'] = $fileExtension;
+         }
+         $imageService = $this->getImageService();
++        $processingInstructions['rotate'] = $cropVariantCollection->getRotate($cropVariant);
+         $processedImage = $imageService->applyProcessingInstructions($image, $processingInstructions);
+         $imageUri = $imageService->getImageUri($processedImage);
+ 

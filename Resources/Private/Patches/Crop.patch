@@ -1,0 +1,101 @@
+diff --git a/Classes/Imaging/ImageManipulation/CropVariant.php b/Classes/Imaging/ImageManipulation/CropVariant.php
+index 5e2005b..f7faa60 100644
+--- a/Classes/Imaging/ImageManipulation/CropVariant.php
++++ b/Classes/Imaging/ImageManipulation/CropVariant.php
+@@ -56,6 +56,11 @@ class CropVariant
+      */
+     protected $coverAreas;
+
++    /**
++     * @var int
++     */
++    protected $rotate;
++
+     /**
+      * @param string $id
+      * @param string $title
+@@ -64,6 +69,7 @@ class CropVariant
+      * @param string|null $selectedRatio
+      * @param Area|null $focusArea
+      * @param Area[]|null $coverAreas
++     * @param int $rotate
+      * @throws InvalidConfigurationException
+      */
+     public function __construct(
+@@ -73,7 +79,8 @@ class CropVariant
+         array $allowedAspectRatios = null,
+         string $selectedRatio = null,
+         Area $focusArea = null,
+-        array $coverAreas = null
++        array $coverAreas = null,
++        int $rotate = 0
+     ) {
+         $this->id = $id;
+         $this->title = $title;
+@@ -87,6 +94,7 @@ class CropVariant
+             }
+         }
+         $this->focusArea = $focusArea;
++        $this->rotate = $rotate;
+         if ($coverAreas !== null) {
+             $this->setCoverAreas(...$coverAreas);
+         }
+@@ -108,7 +116,8 @@ class CropVariant
+                 isset($config['allowedAspectRatios']) ? Ratio::createMultipleFromConfiguration($config['allowedAspectRatios']) : null,
+                 $config['selectedRatio'] ?? null,
+                 isset($config['focusArea']) ? Area::createFromConfiguration($config['focusArea']) : null,
+-                isset($config['coverAreas']) ? Area::createMultipleFromConfiguration($config['coverAreas']) : null
++                isset($config['coverAreas']) ? Area::createMultipleFromConfiguration($config['coverAreas']) : null,
++                $config['rotate'] ?? 0
+             );
+         } catch (\Throwable $throwable) {
+             throw new InvalidConfigurationException(sprintf('Invalid type in configuration for crop variant: %s', $throwable->getMessage()), 1485278693, $throwable);
+@@ -140,6 +149,7 @@ class CropVariant
+             'selectedRatio' => $this->selectedRatio,
+             'focusArea' => $this->focusArea ? $this->focusArea->asArray() : null,
+             'coverAreas' => $coverAreasAsArray ?? null,
++            'rotate' => $this->rotate,
+         ];
+     }
+
+@@ -227,4 +237,9 @@ class CropVariant
+     {
+         $this->coverAreas[] = $area;
+     }
++
++    public function getRotate(): int
++    {
++        return $this->rotate;
++    }
+ }
+diff --git a/Classes/Imaging/ImageManipulation/CropVariantCollection.php b/Classes/Imaging/ImageManipulation/CropVariantCollection.php
+index d63cb35..d12f657 100644
+--- a/Classes/Imaging/ImageManipulation/CropVariantCollection.php
++++ b/Classes/Imaging/ImageManipulation/CropVariantCollection.php
+@@ -60,6 +60,7 @@ class CropVariantCollection
+                         $id = key($persistedCollectionConfig);
+                         next($persistedCollectionConfig);
+                     }
++                    $cropVariantConfig['rotate'] = $persistedCollectionConfig[$id]['rotate'] ?? 0;
+                     if (isset($persistedCollectionConfig[$id]['cropArea'])) {
+                         $cropVariantConfig['cropArea'] = $persistedCollectionConfig[$id]['cropArea'];
+                     }
+@@ -147,6 +148,18 @@ class CropVariantCollection
+         return Area::createEmpty();
+     }
+
++    /**
++     * @param string $id
++     * @return int
++     */
++    public function getRotate(string $id = 'default'): int
++    {
++        if (isset($this->cropVariants[$id])) {
++            return $this->cropVariants[$id]->getRotate();
++        }
++        return 0;
++    }
++
+     /**
+      * @return CropVariantCollection
+      */

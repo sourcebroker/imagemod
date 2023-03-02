@@ -1,0 +1,24 @@
+diff --git a/Classes/Form/Container/InlineRecordContainer.php b/Classes/Form/Container/InlineRecordContainer.php
+index cd81692..1f03030 100644
+--- a/Classes/Form/Container/InlineRecordContainer.php
++++ b/Classes/Form/Container/InlineRecordContainer.php
+@@ -387,6 +387,7 @@ class InlineRecordContainer extends AbstractContainer
+                         $imageSetup['crop'] = $cropVariantCollection->getCropArea()->makeAbsoluteBasedOnFile($fileObject);
+                     }
+                     $imageSetup = array_merge(['maxWidth' => '145', 'maxHeight' => '45'], $imageSetup);
++                    $imageSetup['rotate'] = $cropVariantCollection->getRotate();
+ 
+                     if (($GLOBALS['TYPO3_CONF_VARS']['GFX']['thumbnails'] ?? false) && $fileObject->isImage()) {
+                         $processedImage = $fileObject->process(ProcessedFile::CONTEXT_IMAGECROPSCALEMASK, $imageSetup);
+diff --git a/Classes/Utility/BackendUtility.php b/Classes/Utility/BackendUtility.php
+index 71db3a5..ef5537a 100644
+--- a/Classes/Utility/BackendUtility.php
++++ b/Classes/Utility/BackendUtility.php
+@@ -1079,6 +1079,7 @@ class BackendUtility
+                             'crop' => $cropArea->makeAbsoluteBasedOnFile($fileReferenceObject),
+                         ];
+                     }
++                    $processingConfiguration['rotate'] = $cropVariantCollection->getRotate();
+                     $processedImage = $fileObject->process($taskType, $processingConfiguration);
+                     $attributes = [
+                         'src' => $processedImage->getPublicUrl() ?? '',

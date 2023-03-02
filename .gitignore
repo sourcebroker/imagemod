@@ -1,0 +1,7 @@
+/.Build
+/composer.lock
+/var
+/.env
+/.test
+/.idea
+

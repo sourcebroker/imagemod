@@ -1,0 +1,30 @@
+diff --git a/Classes/Resource/Processing/LocalCropScaleMaskHelper.php b/Classes/Resource/Processing/LocalCropScaleMaskHelper.php
+index b219b5f..e7c5be1 100644
+--- a/Classes/Resource/Processing/LocalCropScaleMaskHelper.php
++++ b/Classes/Resource/Processing/LocalCropScaleMaskHelper.php
+@@ -76,6 +76,25 @@ class LocalCropScaleMaskHelper
+ 
+         $options = $this->getConfigurationForImageCropScaleMask($targetFile, $gifBuilder);
+ 
++        if (!empty($configuration['rotate'])) {
++            $backupPrefix = $gifBuilder->filenamePrefix;
++            $result = $gifBuilder->imageMagickConvert(
++                $originalFileName,
++                $configuration['fileExtension'],
++                '',
++                '',
++                sprintf('-rotate %s', $configuration['rotate']),
++                '',
++                ['noScale' => true],
++                true
++            );
++            $gifBuilder->filenamePrefix = $backupPrefix;
++
++            if ($result !== null) {
++                $originalFileName = $result[3];
++            }
++        }
++
+         $croppedImage = null;
+         if (!empty($configuration['crop'])) {
+ 
